@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profile-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: profile
+  template:
+    metadata:
+      labels:
+        app: profile
+    spec:
+      containers:
+      - name: profile
+        image: profile-image
+        env:
+        - name: USERNAME
+          value: USERNAME
+        - name: PASSWORD
+          value: PASSWORD
+        - name: HOST
+          value: HOST
+        - name: DBPORT
+          value: DBPORT
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  selector:
+    app: myapp
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
