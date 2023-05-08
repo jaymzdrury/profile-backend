@@ -19,11 +19,11 @@ app.get('/', async (req, res) => {
     }
 })
 
-app.post('/', (req, res) => {
+app.post('/', async (req, res) => {
     const {title, email, msg} = req.body
     try {
-        const newMsg = pool.query('INSERT INTO email(title, email, msg) VALUES($1, $2, $3)', [title, email, msg])
-        res.json(newMsg)
+        const newMsg = await pool.query('INSERT INTO email(title, email, msg) VALUES($1, $2, $3) RETURNING *', [title, email, msg])
+        res.json(newMsg.rows[0])
     } catch (err) {
         console.log(err)
     }
@@ -91,3 +91,5 @@ const server = app.listen(PORT, () => console.log(`Server running on port ${PORT
 process.on('unhandledRejection', (err) => {
     server.close(() => process.exit(1))
 })
+
+module.exports = app
