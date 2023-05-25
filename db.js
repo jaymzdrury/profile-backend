@@ -1,4 +1,5 @@
 const Pool = require('pg').Pool
+const { BadRequestError } = require('./errors/bad-request')
 require('dotenv').config()
 
 const pool = new Pool({
@@ -9,4 +10,9 @@ const pool = new Pool({
     database: 'postgres'
 })
 
-module.exports = pool
+const db = pool.connect((err, client, done) => {
+    if(err) throw new BadRequestError(`Postgres Failed: ${err}`)
+    return client
+})
+
+module.exports = db
